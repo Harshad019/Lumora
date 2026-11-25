@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumora — Data Analytics Studio</title>
+  <meta name="description" content="Lumora is a privacy-first CSV analytics and dashboard-building studio. See your data in a new light.">
+  <meta name="application-name" content="Lumora">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <!-- Lumora Studio Application Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <span class="lumora-wordmark">lumora<span class="accent-dot">.</span></span>
+        <span class="brand-descriptor">Data Analytics Studio</span>
+      </div>
+      
+      <div class="header-meta">
+        <!-- Theme Switcher (Light / Dark) -->
+        <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle color theme" title="Toggle color theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span class="theme-toggle-label">Dark</span>
+        </button>
+
+        <!-- New Dashboard Action Button -->
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-header-new-dashboard" title="Start a fresh dashboard workspace">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          New Dashboard
+        </button>
+
+        <!-- Saved Dashboards Action Button -->
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-saved-dashboards">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Saved Dashboards
+        </button>
+
+        <!-- Privacy Guarantee Badge -->
+        <div class="privacy-pill" title="All CSV parsing and calculations execute locally in your browser. No dataset rows ever leave your machine.">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>100% Client-Side Privacy</span>
+        </div>
+
+        <!-- Live Server Status Indicator -->
+        <div class="status-indicator" id="server-status" title="Checking server connection...">
+          <span class="status-dot" id="server-status-dot"></span>
+          <span id="server-status-text">Connecting...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="app-main">
+
+    <!-- Upload Experience (Lumora Landing Screen) -->
+    <section class="upload-card" id="upload-section" aria-labelledby="upload-heading">
+      <div class="upload-hero-text">
+        <h1 class="upload-tagline" id="upload-heading">See your data in a new light.</h1>
+        <p class="upload-description">
+          Lumora is a privacy-first analytics studio for browser-based CSV exploration and dashboard building.
+        </p>
+        <span class="upload-supporting">Your data. Your perspective. Your insights.</span>
+      </div>
+
+      <div class="dropzone" id="dropzone" tabindex="0" role="region" aria-label="CSV Upload Dropzone">
+        <div class="dropzone-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <h2 class="dropzone-title">Drop your CSV dataset here</h2>
+        <p class="dropzone-subtitle">Drag and drop your CSV file, or choose an option below to begin.</p>
+        
+        <input type="file" id="csv-file-input" accept=".csv,text/csv" class="hidden" aria-label="Select CSV file">
+
+        <div class="dropzone-actions">
+          <button type="button" class="btn btn-primary" id="btn-browse">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Browse CSV File
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-load-sample">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Load Sample Dataset
+          </button>
+        </div>
+
+        <div class="dropzone-privacy-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>All processing runs strictly in your browser RAM. Zero raw rows uploaded.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dataset Summary Banner (Revealed when file is loaded) -->
+    <section class="dataset-banner hidden" id="dataset-banner" aria-label="Dataset Overview">
+      <div class="dataset-info">
+        <div class="file-name-group">
+          <svg class="file-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          <span class="file-name" id="dataset-name">dataset.csv</span>
+        </div>
+
+        <div class="stat-pills">
+          <span class="stat-pill"><strong id="stat-rows">0</strong> Rows</span>
+          <span class="stat-pill"><strong id="stat-cols">0</strong> Columns</span>
+          <span class="stat-pill">Size: <strong id="stat-size">0 KB</strong></span>
+          <span class="stat-pill">Parse Time: <strong id="stat-time">0 ms</strong></span>
+        </div>
+      </div>
+
+      <div class="banner-actions">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-replace-csv">
+          Replace File
+        </button>
+        <button type="button" class="btn btn-danger btn-sm" id="btn-clear-csv">
+          Clear Data
+        </button>
+      </div>
+    </section>
+
+    <!-- Data Profile & Statistics Section -->
+    <section class="profile-card hidden" id="profile-section" aria-label="Dataset Profile & Statistics">
+      <div class="profile-header">
+        <h2 class="table-title">Data Profile & Statistics</h2>
+        <span class="stat-pill">Computed locally in browser memory</span>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid" id="profile-summary-cards">
+        <!-- Dynamically rendered by profilerUI.js -->
+      </div>
+
+      <!-- Column Statistics Table -->
+      <div class="table-container" tabindex="0" aria-label="Column summary statistics table" style="max-height: 320px;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Column</th>
+              <th>Type</th>
+              <th>Missing Values (%)</th>
+              <th>Distinct</th>
+              <th>Min / Max</th>
+              <th>Mean</th>
+              <th>Median</th>
+            </tr>
+          </thead>
+          <tbody id="profile-table-body">
+            <!-- Dynamically rendered -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Multi-Chart Dashboard Grid Section -->
+    <section class="dashboard-grid-section hidden" id="dashboard-grid-section" aria-label="Multi-Chart Dashboard Grid">
+      <div class="dashboard-grid-toolbar">
+        <div class="dashboard-title-group" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+          <h2 class="table-title" style="margin-bottom: 0;">Visual Analytics Dashboard</h2>
+          <div class="save-status-indicator clean" id="save-status-indicator" title="All dashboard changes are saved to SQLite">
+            <span class="save-status-dot"></span>
+            <span class="save-status-text" id="save-status-text">All changes saved</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: center;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-new-dashboard" title="Start a fresh dashboard workspace">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            New Dashboard
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-add-chart">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Chart
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-save-dashboard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save Dashboard
+          </button>
+        </div>
+      </div>
+      <div id="dashboard-grid" class="dashboard-grid"></div>
+    </section>
+
+    <!-- Interactive Visual Single Chart Section (Fallback & Primary chart view) -->
+    <section class="chart-card hidden" id="chart-section" aria-label="Interactive Chart">
+      <div class="chart-header">
+        <div class="chart-title-group">
+          <h2 class="table-title" id="chart-display-title">Visual Analytics</h2>
+        </div>
+
+        <div class="chart-controls">
+          <div class="control-group">
+            <label for="select-chart-type">Type:</label>
+            <select id="select-chart-type" class="select-input">
+              <option value="bar" selected>Bar Chart</option>
+              <option value="line">Line Chart</option>
+              <option value="pie">Pie Chart</option>
+              <option value="doughnut">Doughnut Chart</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="select-x-axis">X-Axis:</label>
+            <select id="select-x-axis" class="select-input"></select>
+          </div>
+
+          <div class="control-group">
+            <label for="select-y-axis">Y-Axis:</label>
+            <select id="select-y-axis" class="select-input"></select>
+          </div>
+
+          <div class="control-group">
+            <label for="select-aggregation">Aggregation:</label>
+            <select id="select-aggregation" class="select-input">
+              <option value="sum" selected>Sum</option>
+              <option value="avg">Average</option>
+              <option value="count">Count (Rows)</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-sm" id="btn-save-dashboard-single">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save Dashboard
+          </button>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="main-bar-chart"></canvas>
+      </div>
+    </section>
+
+    <!-- Paginated Data Preview Card -->
+    <section class="table-card hidden" id="table-section" aria-label="Data Preview Table">
+      <div class="table-toolbar">
+        <div class="table-title-group">
+          <h2 class="table-title">Dataset Preview</h2>
+          <span class="stat-pill" id="preview-range-info">Showing first 50 rows</span>
+        </div>
+
+        <div class="table-controls">
+          <div class="control-group">
+            <label for="filter-input">Filter rows:</label>
+            <input type="text" id="filter-input" class="search-input" placeholder="Type to filter...">
+          </div>
+
+          <div class="control-group">
+            <label for="page-size-select">Per page:</label>
+            <select id="page-size-select" class="select-input">
+              <option value="10">10</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable Data Table Container -->
+      <div class="table-container" tabindex="0" aria-label="CSV data preview table">
+        <table class="data-table" id="data-preview-table">
+          <thead id="table-head"></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div class="table-footer">
+        <div id="pagination-summary">Page 1 of 1</div>
+        <div class="pagination-buttons">
+          <button type="button" class="pagination-btn" id="btn-first-page" title="First Page">«</button>
+          <button type="button" class="pagination-btn" id="btn-prev-page">Previous</button>
+          <span id="current-page-label" style="padding: 0 0.5rem; font-weight: 600;">1</span>
+          <button type="button" class="pagination-btn" id="btn-next-page">Next</button>
+          <button type="button" class="pagination-btn" id="btn-last-page" title="Last Page">»</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       Modals
+       ======================================================================== -->
+
+  <!-- 1. Save Dashboard Modal -->
+  <div class="modal-backdrop hidden" id="save-modal" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="save-modal-title">Save Dashboard Blueprint</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-save-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="save-dashboard-form">
+        <div class="modal-body">
+          <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
+            Your chart configuration and dataset schema will be saved to SQLite. 
+            <strong>No raw CSV data is ever uploaded or stored.</strong>
+          </p>
+
+          <div id="save-modal-notice" class="error-banner hidden" style="margin-bottom: 0.75rem; background-color: var(--color-primary-light); border-color: var(--color-border); color: var(--color-text-main);"></div>
+
+          <div class="form-group">
+            <label class="form-label" for="dash-title-input">Dashboard Title *</label>
+            <input type="text" id="dash-title-input" class="form-input" required placeholder="e.g. Q3 Sales by Category">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="dash-desc-input">Description (Optional)</label>
+            <textarea id="dash-desc-input" class="form-textarea" rows="2" placeholder="Brief notes about this dashboard..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-save">Cancel</button>
+          <button type="button" class="btn btn-secondary btn-sm hidden" id="btn-save-as-new">Save as New Copy</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-save">Save to SQLite</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Saved Dashboards List Modal -->
+  <div class="modal-backdrop hidden" id="list-modal" role="dialog" aria-modal="true" aria-labelledby="list-modal-title">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="list-modal-title">My Saved Dashboards</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-list-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="saved-dash-list" id="saved-dashboards-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('list-modal').classList.add('hidden')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Reconnect CSV Modal -->
+  <div class="modal-backdrop hidden" id="reconnect-modal" role="dialog" aria-modal="true" aria-labelledby="reconnect-modal-title">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="reconnect-modal-title">Reconnect CSV Dataset</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-reconnect-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--color-text-main);">
+          To open this dashboard, please reconnect the original or compatible CSV file.
+        </p>
+
+        <div style="background-color: var(--color-surface-muted); padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-text-muted); border: 1px solid var(--color-border);">
+          <div style="margin-bottom: 0.35rem;">Dashboard: <strong id="reconnect-dash-title" style="color: var(--color-text-main);">Saved Dashboard</strong></div>
+          <div>Expected File: <strong id="reconnect-filename" style="color: var(--color-text-main);">dataset.csv</strong></div>
+          <div style="margin-top: 0.25rem;">Required Columns: <code id="reconnect-columns" style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 0.15rem 0.35rem; border-radius: 4px; color: var(--color-text-main);"></code></div>
+        </div>
+
+        <!-- Missing columns error banner -->
+        <div class="error-banner hidden" id="reconnect-error-banner" role="alert"></div>
+
+        <div class="dropzone" id="reconnect-dropzone" style="padding: 1.75rem 1rem;" tabindex="0" role="region" aria-label="Reconnect CSV dropzone">
+          <div class="dropzone-icon" style="width: 44px; height: 44px;" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <p style="font-size: 0.9rem; font-weight: 600;">Drop your CSV file here</p>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-browse-reconnect">Browse File</button>
+          <input type="file" id="reconnect-file-input" accept=".csv,text/csv" class="hidden">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-reconnect">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Chart Edit Modal (for Dashboard Grid Widgets) -->
+  <div class="modal-backdrop hidden" id="chart-edit-modal" role="dialog" aria-modal="true" aria-labelledby="chart-edit-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="chart-edit-title">Edit Chart Configuration</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-chart-edit" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="chart-edit-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="edit-chart-title">Chart Title</label>
+            <input type="text" id="edit-chart-title" class="form-input" placeholder="e.g. Sales by Category">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-chart-type">Chart Type</label>
+            <select id="edit-chart-type" class="select-input">
+              <option value="bar">Bar Chart</option>
+              <option value="line">Line Chart</option>
+              <option value="pie">Pie Chart</option>
+              <option value="doughnut">Doughnut Chart</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-chart-x-axis">X-Axis (Category)</label>
+            <select id="edit-chart-x-axis" class="select-input" required></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-chart-y-axis">Y-Axis (Metric)</label>
+            <select id="edit-chart-y-axis" class="select-input"></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-chart-aggregation">Aggregation</label>
+            <select id="edit-chart-aggregation" class="select-input">
+              <option value="sum">Sum</option>
+              <option value="avg">Average</option>
+              <option value="count">Count (Rows)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-chart-edit">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Area -->
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- Lumora Studio Application Footer -->
+  <footer class="app-footer">
+    lumora &bull; Data Analytics Studio &bull; 100% Client-Side Privacy. Data is processed locally in browser memory.
+  </footer>
+
+  <!-- Vendor Scripts (Served locally, zero external CDN dependencies) -->
+  <script src="/vendor/papaparse.min.js"></script>
+  <script src="/vendor/chart.umd.js"></script>
+  
+  <!-- Client Application Script -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
